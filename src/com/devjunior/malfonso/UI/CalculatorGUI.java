@@ -12,8 +12,10 @@ public class CalculatorGUI extends JFrame {
     private JTextField display;
     private JPanel panel;
     private CalculatorLogic calculatorLogic;
+    private JTextField opercount;
 
     public CalculatorGUI(){
+        JPanel panelSpace = new JPanel(new GridLayout(2,1));
         calculatorLogic = new CalculatorLogic();
         setTitle("Calculadora");
         setSize(400,500);
@@ -22,16 +24,26 @@ public class CalculatorGUI extends JFrame {
         display = new JTextField();
         display.setEditable(false);
         display.setFont(new Font("Roboto", Font.PLAIN, 50));
-        add(display, BorderLayout.NORTH);
+
+        opercount = new JTextField();
+        opercount.setEditable(false);
+        opercount.setFont(new Font("Roboto", Font.PLAIN, 19));
+        opercount.setForeground(Color.GRAY);
+        panelSpace.add(opercount);
+        panelSpace.add(display);
+
+        add(panelSpace, BorderLayout.NORTH);
+
 
         panel = new JPanel();
         panel.setLayout(new GridLayout(4,4,10,10));
         add(panel, BorderLayout.CENTER);
 
+
         String [] buttons =
                 {"7", "8", "9", "/",
                  "4", "5", "6", "*",
-                 "3", "2", "1", "-",
+                 "1", "2", "3", "-",
                  "0", ".", "=", "+"
                 };
         for(String text : buttons){
@@ -49,7 +61,9 @@ public class CalculatorGUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e){
             String command = e.getActionCommand();
-            calculatorLogic.processCommand(command, display);
+            calculatorLogic.processCommand(command, display, opercount);
+            if(display.getText().length() > 14) display.setFont(new Font("Roboto", Font.PLAIN, 23));
+            if(display.getText().length() <= 14) display.setFont(new Font("Roboto", Font.PLAIN, 50));
 
         }
 
