@@ -13,8 +13,8 @@ public class CalculatorLogic {
 
     public CalculatorLogic(){
         num1 = BigDecimal.ZERO;
-        num2 = BigDecimal.ZERO;
         nresult = true;
+
     }
 
     public void processCommand(String command, JTextField display, JTextField opercount){
@@ -26,8 +26,8 @@ public class CalculatorLogic {
                 nresult = true;
             }
             if(display.getText().charAt(0)=='.')display.setText("0" + display.getText());
-        }else if("+-*/".contains(command)){
-            if(!display.getText().isEmpty() && !display.getText().equals("-")){
+        }else if("+-*/%".contains(command)){
+            if(!display.getText().isEmpty()){
                 num1 = operator == '\u0000'?new BigDecimal(display.getText()):operation(num1, new BigDecimal(display.getText()), operator);
                 operator = command.charAt(0);
                 opercount.setText(opercount.getText() + display.getText() + command);
@@ -35,12 +35,9 @@ public class CalculatorLogic {
             }else if(display.getText().isEmpty() && operator != '\u0000'){
                 operator = command.charAt(0);
                 opercount.setText(opercount.getText().substring(0,opercount.getText().length()-1)+operator);
-            } else if (display.getText().isEmpty() && operator == '\u0000' && command.equals("-")) {
-                display.setText(command);
             }
 
-
-        }else if(command.equals("=") && !display.getText().equals("-")){
+        }else if(command.equals("=")){
             if(!display.getText().isEmpty()){
                 num2 = new BigDecimal(display.getText());
                 operator = operator == '\u0000'? '+':operator;
@@ -48,13 +45,25 @@ public class CalculatorLogic {
                 num1 = BigDecimal.ZERO;
             }
             else{
-                display.setText(String.valueOf(num1));
+                display.setText(operator!='%'?String.valueOf(num1):String.valueOf(operation(num1, num2, operator)));
             }
 
             opercount.setText("");
             operator = '\u0000';
             nresult = false;
+        } else if (command.equals("⌫")) {
+            if(!display.getText().isEmpty())display.setText(display.getText().substring(0, display.getText().length()-1));
+        }else if(command.equals("AC")){
+            num1 = BigDecimal.ZERO;
+            num2 = BigDecimal.ZERO;
+            nresult = true;
+            operator = '\u0000';
+            display.setText("");
+            opercount.setText("");
+        }else if(command.equals("+/-") && !display.getText().isEmpty() && !display.getText().equals("0")){
+            display.setText(display.getText().charAt(0)=='-'?display.getText().replaceFirst("-",""):"-" + display.getText());
         }
+
     }
 
     private BigDecimal operation(BigDecimal n1, BigDecimal n2, char oper){
@@ -81,6 +90,31 @@ public class CalculatorLogic {
                     result = n1.divide(n2, 4, RoundingMode.HALF_UP);
                 }
                 break;
+            case '%':
+                try{
+                    if(n2 == null){
+                        result = n1.divide(new BigDecimal(100));
+                    }else{
+                        if(n2.compareTo(BigDecimal.ZERO) == 0){
+                            return BigDecimal.ZERO;
+                        }
+                        result = n1.divide(new BigDecimal(100)).multiply(n2);
+                    }
+                }catch (ArithmeticException e){
+                    if(n2 == null){
+                        result = n1.divide(new BigDecimal(100), 4, RoundingMode.HALF_UP);
+                    }else{
+                        if(n2.compareTo(BigDecimal.ZERO) == 0){
+                            return BigDecimal.ZERO;
+                        }
+                        result = n1.divide(new BigDecimal(100), 4, RoundingMode.HALF_UP).multiply(n2);
+                    }
+
+                }
+                break;
+
+
+
             default:
                 throw new IllegalStateException("Unexpected value: " + oper);
         }

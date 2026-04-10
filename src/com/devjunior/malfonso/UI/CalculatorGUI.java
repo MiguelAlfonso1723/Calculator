@@ -36,20 +36,21 @@ public class CalculatorGUI extends JFrame {
 
 
         panel = new JPanel();
-        panel.setLayout(new GridLayout(4,4,10,10));
+        panel.setLayout(new GridLayout(5,4,10,10));
         add(panel, BorderLayout.CENTER);
 
 
         String [] buttons =
-                {"7", "8", "9", "/",
-                 "4", "5", "6", "*",
-                 "1", "2", "3", "-",
-                 "0", ".", "=", "+"
+                {"AC", "⌫", "%", "/",
+                 "7", "8", "9", "*",
+                 "4", "5", "6", "-",
+                 "1", "2", "3", "+",
+                 "+/-", "0", ".", "="
                 };
         for(String text : buttons){
-            JButton button = new JButton(text);
-            button.setFont(new Font("Roboto", Font.PLAIN, 20));
 
+            JButton button = new JButton(text);
+            button.setFont(new Font("Arial Unicode MS", Font.BOLD, 20));
             button.addActionListener(new ButtonClickListener());
             panel.add(button);
         }
