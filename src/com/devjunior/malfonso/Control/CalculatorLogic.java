@@ -55,7 +55,6 @@ public class CalculatorLogic {
             if(!display.getText().isEmpty())display.setText(display.getText().substring(0, display.getText().length()-1));
         }else if(command.equals("AC")){
             num1 = BigDecimal.ZERO;
-            num2 = BigDecimal.ZERO;
             nresult = true;
             operator = '\u0000';
             display.setText("");
