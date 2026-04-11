@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 
 public class CalculatorLogic {
 
@@ -14,20 +15,23 @@ public class CalculatorLogic {
     public CalculatorLogic(){
         num1 = BigDecimal.ZERO;
         nresult = true;
-
     }
 
-    public void processCommand(String command, JTextField display, JTextField opercount){
+    public void processCommand(String command, JTextField display, JTextField opercount, JTextArea textArea){
         if((Character.isDigit(command.charAt(0))|| command.equals(".")) && display.getText().length() <=30){
             display.setText(Character.isDigit(command.charAt(0)) || !display.getText().contains(".")?display.getText()+command:display.getText());
             if(display.getText().charAt(0)=='0' && Character.isDigit(command.charAt(0)) && !display.getText().contains("."))display.setText(command);
             if(!nresult){
+                opercount.setText(opercount.getText().charAt(0)=='='?"":opercount.getText());
                 display.setText(command);
                 nresult = true;
             }
             if(display.getText().charAt(0)=='.')display.setText("0" + display.getText());
         }else if("+-*/%".contains(command)){
             if(!display.getText().isEmpty()){
+                if(!opercount.getText().isEmpty()){
+                    opercount.setText(opercount.getText().charAt(0)=='='?"":opercount.getText());
+                }
                 num1 = operator == '\u0000'?new BigDecimal(display.getText()):operation(num1, new BigDecimal(display.getText()), operator);
                 operator = command.charAt(0);
                 opercount.setText(opercount.getText() + display.getText() + command);
@@ -38,19 +42,27 @@ public class CalculatorLogic {
             }
 
         }else if(command.equals("=")){
+            textArea.setText(textArea.getText() + "\n" + "-".repeat(219) + "\n");
             if(!display.getText().isEmpty()){
                 num2 = new BigDecimal(display.getText());
                 operator = operator == '\u0000'? '+':operator;
                 display.setText(String.valueOf(operation(num1, num2, operator)));
+                textArea.setText(textArea.getText() + opercount.getText() + num2 +" = " + display.getText());
                 num1 = BigDecimal.ZERO;
             }
             else{
                 display.setText(operator!='%'?String.valueOf(num1):String.valueOf(operation(num1, num2, operator)));
+                textArea.setText("+-/*".contains(opercount.getText().substring(opercount.getText().length()-1))?
+                        textArea.getText() + opercount.getText().substring(0, opercount.getText().length()-1)
+                        : textArea.getText() + opercount.getText());
+
+                textArea.setText(textArea.getText() + " = " + display.getText());
             }
 
-            opercount.setText("");
+            opercount.setText("="+display.getText());
             operator = '\u0000';
             nresult = false;
+
         } else if (command.equals("⌫")) {
             if(!display.getText().isEmpty())display.setText(display.getText().substring(0, display.getText().length()-1));
         }else if(command.equals("AC")){
